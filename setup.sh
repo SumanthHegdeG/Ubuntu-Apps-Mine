@@ -130,7 +130,8 @@ sudo snap install core20
 sudo snap install core22
 sudo snap install core24
 sudo snap install eclipse --classic
-sudo snap install handbrake-jz
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install handbrake -y
 sudo snap install ffmpeg
 sudo snap install firefox
 sudo snap install firmware-updater
