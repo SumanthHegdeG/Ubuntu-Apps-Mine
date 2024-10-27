@@ -160,6 +160,8 @@ sudo snap install snapd-desktop-integration
 sudo snap install transmission
 sudo snap install vlc
 sudo snap install winamp
+sudo snap install auto-cpufreq
+systemctl enable --now auto-cpufreq 
 sudo snap install wine-platform-5-stable
 sudo snap install wine-platform-7-devel-core20
 sudo snap install wine-platform-runtime
