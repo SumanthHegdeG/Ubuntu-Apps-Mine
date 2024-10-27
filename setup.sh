@@ -160,7 +160,7 @@ sudo snap install snapd-desktop-integration
 sudo snap install transmission
 sudo snap install vlc
 sudo snap install winamp
-sudo snap install auto-cpufreq
+
 
 sudo snap install wine-platform-5-stable
 sudo snap install wine-platform-7-devel-core20
@@ -168,6 +168,9 @@ sudo snap install wine-platform-runtime
 sudo snap install wine-platform-runtime-core20
 
 sudo snap install whatsapp-for-linux
+
+git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+cd auto-cpufreq && sudo ./auto-cpufreq-installer
 
 # Git Configuration
 git config --global user.name "SumanthHegdeG"
