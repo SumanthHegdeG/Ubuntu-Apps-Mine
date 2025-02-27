@@ -90,30 +90,18 @@ else
     echo "Docker is already installed. Checking for updates..."
     sudo apt install --only-upgrade docker.io -y
 fi
+sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
+sudo apt update
 
-# Install Kubernetes Tools
 
-## kubectl
-if ! command -v kubectl &> /dev/null; then
-    sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl
-    sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-    sudo apt-get update
-    sudo apt-get install -y kubectl
-else
-    echo "kubectl is already installed. Checking for updates..."
-    sudo apt-get install --only-upgrade kubectl -y
-fi
 
-## Minikube
-if ! command -v minikube &> /dev/null; then
-    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube
-else
-    echo "Minikube is already installed. Checking for updates..."
-    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube
-fi
+
+sudo apt install snapd
+
+snap install hello-world
+
+hello-world
+
 
 # Snap Package Installations
 
