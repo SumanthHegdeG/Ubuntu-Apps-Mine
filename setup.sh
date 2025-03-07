@@ -92,16 +92,27 @@ else
 fi
 sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
 sudo apt update
+echo "installing minikube "
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+
+echo "minikube installed"
 
 
+echo "installing kubeCtl"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+kubectl version --client
+kubectl version --client --output=yaml
+echo "kubectl installed"
 
-
+echo  "installing Snapcraft Deamon"
 sudo apt install snapd
-
 snap install hello-world
-
 hello-world
-
+echo "Snapcraft installed"
 
 # Snap Package Installations
 
