@@ -109,7 +109,10 @@ kubectl version --client --output=yaml
 echo "kubectl installed"
 
 echo  "installing Snapcraft Deamon"
+sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
+sudo apt update
 sudo apt install snapd
+
 snap install hello-world
 hello-world
 echo "Snapcraft installed"
