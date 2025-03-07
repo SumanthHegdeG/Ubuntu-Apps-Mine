@@ -92,21 +92,53 @@ else
 fi
 sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
 sudo apt update
-echo "installing minikube "
-curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+# Install Minikube
+echo "Installing Minikube..."
+if ! command -v minikube &> /dev/null; then
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+    echo "Minikube installed successfully."
+else
+    echo "Minikube is already installed."
+fi
 
-echo "minikube installed"
+# Install kubectl
+echo "Installing kubectl..."
+if ! command -v kubectl &> /dev/null; then
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    
+    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    rm kubectl kubectl.sha256
+    echo "kubectl installed successfully."
+else
+    echo "kubectl is already installed."
+fi
 
+# Verify installations
+echo "Verifying installations..."
+if command -v minikube &> /dev/null; then
+    echo "Minikube version: $(minikube version)"
+else
+    echo "Minikube installation failed."
+    exit 1
+fi
 
-echo "installing kubeCtl"
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-kubectl version --client
-kubectl version --client --output=yaml
-echo "kubectl installed"
+if command -v kubectl &> /dev/null; then
+    echo "kubectl version: $(kubectl version --client --short)"
+else
+    echo "kubectl installation failed."
+    exit 1
+fi
+
+if command -v snap &> /dev/null; then
+    echo "Snap is installed and working correctly."
+else
+    echo "Snap installation failed."
+    exit 1
+fi
 
 echo  "installing Snapcraft Deamon"
 sudo mv /etc/apt/preferences.d/nosnap.pref ~/Documents/nosnap.backup
