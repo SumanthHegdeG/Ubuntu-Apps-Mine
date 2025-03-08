@@ -11,6 +11,7 @@ trap 'handle_error $LINENO' ERR
 
 # Update and Upgrade the System
 sudo apt update && sudo apt upgrade -y
+sudo apt install ultracopier
 
 # Install or Upgrade Git
 if ! command -v git &> /dev/null; then
