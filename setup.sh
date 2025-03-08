@@ -294,12 +294,62 @@ sudo systemctl enable battery_monitor.service
 sudo systemctl start battery_monitor.service
 
 
-sudo add-apt-repository ppa:camel-neeraj/sysmontask
-sudo apt install sysmontask
-#Install psutil if Ubuntu<=20.04, other-wise skip this step(more info given below) :
-sudo pip3 install -U psutil
-sudo sysmontask  
-#optional to run via terminal but recommended for the first time
+#!/bin/bash
+
+echo "Installing SysMonTask on Linux Mint..."
+
+# Check if SysMonTask is already installed
+if command -v sysmontask &>/dev/null; then
+    echo "✅ SysMonTask is already installed."
+    sysmontask
+    exit 0
+fi
+
+# Detect Ubuntu/Mint version
+UBUNTU_VERSION=$(lsb_release -rs)
+echo "Detected Ubuntu/Mint Version: $UBUNTU_VERSION"
+
+# Attempt to install via DEB package
+echo "🔹 Trying to install via DEB package..."
+wget -q --show-progress https://github.com/KrispyCamel4u/SysMonTask/releases/download/v1.3.1/sysmontask_1.3.1-1_all.deb
+
+if [ -f "sysmontask_1.3.1-1_all.deb" ]; then
+    sudo apt install ./sysmontask_1.3.1-1_all.deb -y
+    rm -f sysmontask_1.3.1-1_all.deb
+    if command -v sysmontask &>/dev/null; then
+        echo "✅ SysMonTask installed successfully via DEB package!"
+        sysmontask
+        exit 0
+    fi
+else
+    echo "❌ Failed to download the DEB package."
+fi
+
+# If DEB package fails, try pipx
+echo "🔹 Trying to install via pipx..."
+sudo apt install pipx -y && pipx install sysmontask
+
+if command -v sysmontask &>/dev/null; then
+    echo "✅ SysMonTask installed successfully via pipx!"
+    sysmontask
+    exit 0
+fi
+
+# If pipx fails, try virtual environment
+echo "🔹 Trying to install in a virtual environment..."
+sudo apt install python3-venv -y
+python3 -m venv ~/.venv/sysmontask
+source ~/.venv/sysmontask/bin/activate
+pip install sysmontask
+
+if command -v sysmontask &>/dev/null; then
+    echo "✅ SysMonTask installed successfully in a virtual environment!"
+    sysmontask
+    exit 0
+fi
+
+echo "❌ Installation failed. Please check your internet connection or try manually installing."
+exit 1
 
 
 echo "Setup complete. The battery monitor script will run at startup."
