@@ -293,4 +293,13 @@ sudo systemctl daemon-reload
 sudo systemctl enable battery_monitor.service
 sudo systemctl start battery_monitor.service
 
+
+sudo add-apt-repository ppa:camel-neeraj/sysmontask
+sudo apt install sysmontask
+#Install psutil if Ubuntu<=20.04, other-wise skip this step(more info given below) :
+sudo pip3 install -U psutil
+sudo sysmontask  
+#optional to run via terminal but recommended for the first time
+
+
 echo "Setup complete. The battery monitor script will run at startup."
