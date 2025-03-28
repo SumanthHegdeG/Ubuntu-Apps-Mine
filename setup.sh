@@ -23,6 +23,13 @@ fi
 
 # Install or Upgrade Compilers and Interpreters
 
+sudo add-apt-repository -y ppa:teejee2008/ppa
+sudo apt-get update
+sudo apt-get install aptik-battery-monitor
+
+sudo sh ./aptik-battery-monitor*amd64.run # 64-bit, or
+sudo sh ./aptik-battery-monitor*i386.run  # 32-bit
+
 ## GCC (C/C++ Compiler)
 if ! command -v gcc &> /dev/null; then
     sudo apt install build-essential -y
