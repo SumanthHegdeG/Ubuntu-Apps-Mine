@@ -62,7 +62,7 @@ def show_notification(message):
 def play_alarm(sound_path, duration):
     while alert_active:
         playsound(sound_path)
-        time.sleep(duration)  # Wait for alarm to finish before playing again
+        time.sleep(0.5)  # Wait for alarm to finish before playing again
 
 def battery_alert():
     global alert_active
