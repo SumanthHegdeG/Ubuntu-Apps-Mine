@@ -1,80 +1,83 @@
 #!/bin/bash
 
-# Define file paths
-PYTHON_SCRIPT="/battery-limiter.py"
+# Define paths and URLs
 SCRIPT_URL="https://raw.githubusercontent.com/SumanthHegdeG/Ubuntu-Apps-Mine/main/battery-limiter.py"
-SERVICE_FILE="/etc/systemd/system/battery_limiter.service"
-STARTUP_FILE="$HOME/.config/autostart/battery_limiter.desktop"
-SHELL_SCRIPT="/usr/local/bin/start_battery_limiter.sh"
+SCRIPT_PATH="/battery-limiter.py"
+ALARM_FILE="/alarm.mp3"
+ALARM_URL="https://raw.githubusercontent.com/SumanthHegdeG/Ubuntu-Apps-Mine/main/alarm.mp3"
 
-# Ensure necessary packages are installed
-echo "Installing required packages..."
-sudo apt update && sudo apt install -y curl python3 python3-pip
+# Function to check and install required system packages
+install_system_packages() {
+    echo "Installing required system packages..."
+    sudo apt update
+    sudo apt install -y python3 python3-pip libnotify-bin
+}
 
-# Download the Python script
-echo "Downloading battery limiter script..."
-curl -L $SCRIPT_URL -o $PYTHON_SCRIPT
+# Function to install required Python packages
+install_python_packages() {
+    echo "Installing required Python packages..."
+    pip3 install --break-system-packages psutil mutagen
+}
 
-# Print the saved file location
-if [ -f "$PYTHON_SCRIPT" ]; then
-    echo "File successfully downloaded to: $PYTHON_SCRIPT"
-else
-    echo "Error: File download failed!"
-    exit 1
-fi
+# Function to download the battery limiter script
+download_script() {
+    echo "Downloading battery limiter script..."
+    wget -O "$SCRIPT_PATH" "$SCRIPT_URL"
+    chmod +x "$SCRIPT_PATH"
+    echo "Script saved at: $SCRIPT_PATH"
+}
 
-chmod +x $PYTHON_SCRIPT
+# Function to ensure the alarm sound file exists
+ensure_alarm_file() {
+    if [ ! -f "$ALARM_FILE" ]; then
+        echo "Downloading alarm sound file..."
+        wget -O "$ALARM_FILE" "$ALARM_URL"
+        echo "Alarm sound saved at: $ALARM_FILE"
+    fi
+}
 
-# Create a shell script to run the Python script continuously
-echo "Creating shell script..."
-cat <<EOL | sudo tee $SHELL_SCRIPT
-#!/bin/bash
-while true; do
-    python3 $PYTHON_SCRIPT
-    sleep 5
-done
-EOL
-sudo chmod +x $SHELL_SCRIPT
+# Function to add script to system startup using cron
+add_cron_job() {
+    echo "Adding script to startup cron job..."
+    (crontab -l 2>/dev/null; echo "@reboot python3 $SCRIPT_PATH &") | crontab -
+}
 
-# Create a systemd service
-echo "Setting up systemd service..."
-cat <<EOL | sudo tee $SERVICE_FILE
-[Unit]
-Description=Battery Limiter Service
-After=network.target
+# Function to add script to GNOME Startup Applications
+add_to_gnome_startup() {
+    AUTOSTART_DIR="$HOME/.config/autostart"
+    mkdir -p "$AUTOSTART_DIR"
+    AUTOSTART_FILE="$AUTOSTART_DIR/battery-limiter.desktop"
 
-[Service]
-ExecStart=$SHELL_SCRIPT
-Restart=always
-User=$USER
-
-[Install]
-WantedBy=multi-user.target
-EOL
-
-# Reload systemd and enable service
-sudo systemctl daemon-reload
-sudo systemctl enable battery_limiter.service
-sudo systemctl start battery_limiter.service
-
-# Add cron job as a fallback
-echo "Adding cron job..."
-(crontab -l 2>/dev/null; echo "@reboot $SHELL_SCRIPT") | crontab -
-
-# Ensure GNOME Startup Applications exists
-mkdir -p "$HOME/.config/autostart"
-
-# Create a GNOME Startup Application entry
-echo "Adding to GNOME Startup Applications..."
-cat <<EOL > "$STARTUP_FILE"
+    cat <<EOF > "$AUTOSTART_FILE"
 [Desktop Entry]
 Type=Application
-Exec=$SHELL_SCRIPT
+Exec=python3 $SCRIPT_PATH
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name=Battery Limiter
-Comment=Auto-start Battery Limiter
-EOL
+Comment=Battery charge and low battery alarm
+EOF
 
-echo "Setup complete! Reboot your system to apply changes."
+    echo "Script successfully added to GNOME Startup Applications."
+}
+
+# Function to start the script in the background
+start_script() {
+    echo "Starting battery-limiter script..."
+    nohup python3 "$SCRIPT_PATH" > /dev/null 2>&1 &
+}
+
+# Run all functions
+install_system_packages
+install_python_packages
+download_script
+ensure_alarm_file
+add_cron_job
+add_to_gnome_startup
+start_script
+
+echo "Setup complete. Battery limiter is now running."
+
+
+chmod +x battery-limiter.sh
