@@ -111,7 +111,7 @@ def battery_alert():
             alert_active = False
             print("Charger plugged in. Exiting low battery alert.")
         
-        time.sleep(10)  # Check battery status every 10 seconds
+        time.sleep(1)  # Check battery status every 1 seconds
 
 if __name__ == "__main__":
     battery_alert()
