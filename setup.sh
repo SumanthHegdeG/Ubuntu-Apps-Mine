@@ -29,6 +29,12 @@ sudo apt-get install aptik-battery-monitor
 
 sudo sh ./aptik-battery-monitor*amd64.run # 64-bit, or
 sudo sh ./aptik-battery-monitor*i386.run  # 32-bit
+sudo wget -O /alarm.mp3 "https://github.com/SumanthHegdeG/Ubuntu-Apps-Mine/raw/main/battery%20limiter/alarm.mp3"
+
+sudo apt install python3-mutagen python3-psutil ffmpeg
+sudo pip3 install pygame
+
+
 
 ## GCC (C/C++ Compiler)
 if ! command -v gcc &> /dev/null; then
