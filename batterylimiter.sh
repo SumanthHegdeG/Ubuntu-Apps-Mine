@@ -1,5 +1,19 @@
 #!/bin/bash
 
+
+sudo pip3 install playsound==1.2.2 --break-system-packages
+sudo add-apt-repository -y ppa:teejee2008/ppa
+sudo apt-get update
+sudo apt-get install aptik-battery-monitor
+
+sudo sh ./aptik-battery-monitor*amd64.run # 64-bit, or
+sudo sh ./aptik-battery-monitor*i386.run  # 32-bit
+sudo wget -O /alarm.mp3 "https://github.com/SumanthHegdeG/Ubuntu-Apps-Mine/raw/main/battery%20limiter/alarm.mp3"
+
+sudo apt install python3-mutagen python3-psutil ffmpeg
+sudo pip3 install pygame
+
+
 # Define paths and URLs
 SCRIPT_URL="https://raw.githubusercontent.com/SumanthHegdeG/Ubuntu-Apps-Mine/main/battery-limiter.py"
 SCRIPT_PATH="/battery-limiter.py"
